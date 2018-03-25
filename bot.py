@@ -26,9 +26,9 @@ def get_insult():
 def get_mkid_quote():
     global turtle_quotes
     if not turtle_quotes:
-        with open('mkid_quotes.txt') as f:
+        with open('turtle_quotes.txt') as f:
             turtle_quotes = f.read().splitlines()
-    r = random.randint(0, len(mkid_quotes)-1)
+    r = random.randint(0, len(turtle_quotes)-1)
     return turtle_quotes[r]
 
 
@@ -45,7 +45,14 @@ async def mkid(ctx):
     await bot.change_nickname(member, "Turtle Quotes")
     message = get_mkid_quote();
     await bot.say(message)
- 
+
+@bot.command(pass_context=True)
+async def quotes(ctx):
+    member = ctx.message.server.get_member(str(bot.user.id))
+    await bot.change_nickname(member, "Turtle Quotes")
+    message = get_mkid_quote();
+    await bot.say(message)
+
 
 
 @bot.command(pass_context=True)
