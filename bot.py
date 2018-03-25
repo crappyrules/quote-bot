@@ -42,7 +42,7 @@ async def on_ready():
 @bot.command(pass_context=True)
 async def mkid(ctx):
     member = ctx.message.server.get_member(str(bot.user.id))
-    await bot.change_nickname(member, "Mkid Quotes")
+    await bot.change_nickname(member, "Turtle Quotes")
     message = get_mkid_quote();
     await bot.say(message)
  
