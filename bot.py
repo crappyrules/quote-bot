@@ -6,7 +6,7 @@ import random
 
 config = json.load(open('config.json'))
 insults = []
-mkid_quotes = []
+turtle_quotes = []
 
 bot = commands.Bot(
                 command_prefix='$',
@@ -24,12 +24,12 @@ def get_insult():
 
 
 def get_mkid_quote():
-    global mkid_quotes
-    if not mkid_quotes:
+    global turtle_quotes
+    if not turtle_quotes:
         with open('mkid_quotes.txt') as f:
-            mkid_quotes = f.read().splitlines()
+            turtle_quotes = f.read().splitlines()
     r = random.randint(0, len(mkid_quotes)-1)
-    return mkid_quotes[r]
+    return turtle_quotes[r]
 
 
 @bot.event
@@ -44,7 +44,7 @@ async def mkid(ctx):
     member = ctx.message.server.get_member(str(bot.user.id))
     await bot.change_nickname(member, "Mkid Quotes")
     message = get_mkid_quote();
-    await bot.say("\"%s\" - mkid" % message)
+    await bot.say(message)
  
 
 
