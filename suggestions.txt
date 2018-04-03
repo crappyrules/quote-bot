@@ -1,0 +1,4 @@
+Use $suggest "<quote>" - <author> to add quotes to this file for review
+Use $suggest <insult> to add insults to this file for review
+--------------------------------------------------------------------
+

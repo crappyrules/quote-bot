@@ -1,18 +1,57 @@
+# Created By: Wesley
+# Date: 4/2/18
+
+import sys, os
 import asyncio
 import discord
 from discord.ext import commands
+from discord.utils import get
 import json
 import random
+import logging
+import datetime
 
+###########
+# Logging #
+###########
+logging.basicConfig(filename='basic.log',level=logging.WARNING)
+
+formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s')
+
+# setup manual logging
+command_log = logging.getLogger("manual")
+command_log.setLevel(logging.INFO)
+command_log.addHandler(logging.FileHandler("discord_commands.log", encoding='utf-8', mode='a+'))
+
+# setup logger with python discord api
+logger = logging.getLogger('discord')
+logger.setLevel(logging.INFO)
+handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='a+')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
+
+#################
+# Initial Setup #
+#################
+
+# init config
 config = json.load(open('config.json'))
+
+# output arrays
 insults = []
 turtle_quotes = []
-
+mkid_quotes = []
 
 bot = commands.Bot(
                 command_prefix='$',
                 description='insult bot',
                 pm_help=False)
+
+
+####################
+# Helper Functions #
+####################
 
 # returns random line from insults.txt
 def get_insult():
@@ -25,44 +64,74 @@ def get_insult():
 
 # returns a random mkid quote
 def get_mkid_quote():
+    global mkid_quotes
+    if not mkid_quotes:
+        with open('mkid_quotes.txt') as f:
+            mkid_quotes = f.read().splitlines()
+    r = random.randint(0, len(mkid_quotes)-1)
+    return mkid_quotes[r]
+
+# returns a random turtle quote
+def get_turtle_quote():
     global turtle_quotes
+
+    # read from file if empty
     if not turtle_quotes:
         with open('turtle_quotes.txt') as f:
             turtle_quotes = f.read().splitlines()
+           
     r = random.randint(0, len(turtle_quotes)-1)
     return turtle_quotes[r]
 
+# write user suggestion to the sugguestion.txt file to be manually added if acceptable
+def write_suggestion(suggestion):
+    with open('suggestions.txt', 'a+') as f:
+        f.write(suggestion + "\n")
+
+
+##############
+# Bot Events #
+##############
+
+# start up confirmation
 @bot.event
 async def on_ready():
-    print('Logged in as')
-    print(bot.user.name)
-    #print(bot.user.id)
-    print('------')
+    print("\n-------------------------------")
+    print("Burn Bot ready")
+    print('Logged in as %s' % bot.user.name)
+    print("-------------------------------\n")
+    logger.info("Bot Started")
 
+
+###############
+# Bot Commans #
+###############
+
+# $mkid
 @bot.command(pass_context=True)
 async def mkid(ctx):
-    # change nickname
-    ##member = ctx.message.server.get_member(str(bot.user.id))
-    ##await bot.change_nickname(member, "Turtle Quotes")
+    
+    command_log.info("%s used $mkid" % str(ctx.message.author))
     
     # get and send message
     message = get_mkid_quote();
-    await bot.say(message)
+    await bot.say(message + " :dog:")
 
+# $quote
 @bot.command(pass_context=True)
-async def quotes(ctx):
-    # change nickname
-    #member = ctx.message.server.get_member(str(bot.user.id))
-    #await bot.change_nickname(member, "Turtle Quotes")
+async def quote(ctx):
+    
+    command_log.info("%s used $quote" % str(ctx.message.author))
     
     # get and send message
-    message = get_mkid_quote();
-    await bot.say(message)
+    message = get_turtle_quote();
+    await bot.say("<:trtl:413861615973433383> " + message + " <:trtl:413861615973433383>")
 
+# $insult
 @bot.command(pass_context=True)
 async def insult(ctx):
-    member = ctx.message.server.get_member(str(bot.user.id))
-    await bot.change_nickname(member, "Burn Bot")
+    
+    command_log.info("%s used $insult" % str(ctx.message.author))
  
     #randomly get message
     message = get_insult()
@@ -82,4 +151,38 @@ async def insult(ctx):
     #await bot.add_reaction(ctx.message, "\U0001F525")
     return
 
+# $reset
+@bot.command(pass_context=True)
+async def reset(ctx):
+    global insults
+    global turtle_quotes
+    global mkid_quotes
+    global thumbs_up
+   
+    command_log.info("%s used $reset" % str(ctx.message.author))
+    
+    # reset name to Burn Bot
+    member = ctx.message.server.get_member(str(bot.user.id))
+    await bot.change_nickname(member, "Burn Bot")
+    
+    # reset output arrays
+    insults = []
+    turtle_quotes = []
+    mkid_quotes = []
+
+    # give thumbs up reaction
+    thumbs_up = get(bot.get_all_emojis(), name='t_ok')
+    await bot.add_reaction(ctx.message, thumbs_up)
+
+# $suggest
+@bot.command(pass_context=True)
+async def suggest(ctx):
+    suggestion = ctx.message.content[9:]
+    command_log.info("%s suggested %s" % (ctx.message.author, suggestion))
+    write_suggestion(suggestion)
+
+#############
+# Start Bot #
+#############
 bot.run(config['token'])
+
