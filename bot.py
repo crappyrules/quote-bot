@@ -109,7 +109,7 @@ async def on_ready():
 # $mkid
 @bot.command(pass_context=True)
 async def mkid(ctx):
-    
+    """Outputs a random mkid quote"""    
     command_log.info("%s used $mkid" % str(ctx.message.author))
     
     # get and send message
@@ -119,7 +119,7 @@ async def mkid(ctx):
 # $quote
 @bot.command(pass_context=True)
 async def quote(ctx):
-    
+    """Outputs a random turtle quote"""
     command_log.info("%s used $quote" % str(ctx.message.author))
     
     # get and send message
@@ -129,7 +129,7 @@ async def quote(ctx):
 # $insult
 @bot.command(pass_context=True)
 async def insult(ctx):
-    
+    """Outputs a random insult that can be directed through @mentions"""
     command_log.info("%s used $insult" % str(ctx.message.author))
  
     #randomly get message
@@ -150,9 +150,22 @@ async def insult(ctx):
     #await bot.add_reaction(ctx.message, "\U0001F525")
     return
 
+# $suggest
+@bot.command(pass_context=True)
+async def suggest(ctx):
+    """Can be used to suggest new quotes or insults to be added to the bot after being reiewed"""
+    suggestion = ctx.message.content[9:]
+    command_log.info("%s suggested %s" % (ctx.message.author, suggestion))
+    write_suggestion(suggestion)
+    
+    # give thumbs up reaction
+    thumbs_up = get(bot.get_all_emojis(), name='t_ok')
+    await bot.add_reaction(ctx.message, thumbs_up)
+
 # $reset
 @bot.command(pass_context=True)
 async def reset(ctx):
+    """Refreshed data to pull in new quotes and insults"""
     global insults
     global turtle_quotes
     global mkid_quotes
@@ -169,17 +182,6 @@ async def reset(ctx):
     turtle_quotes = []
     mkid_quotes = []
 
-    # give thumbs up reaction
-    thumbs_up = get(bot.get_all_emojis(), name='t_ok')
-    await bot.add_reaction(ctx.message, thumbs_up)
-
-# $suggest
-@bot.command(pass_context=True)
-async def suggest(ctx):
-    suggestion = ctx.message.content[9:]
-    command_log.info("%s suggested %s" % (ctx.message.author, suggestion))
-    write_suggestion(suggestion)
-    
     # give thumbs up reaction
     thumbs_up = get(bot.get_all_emojis(), name='t_ok')
     await bot.add_reaction(ctx.message, thumbs_up)
