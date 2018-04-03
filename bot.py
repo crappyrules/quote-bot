@@ -1,7 +1,6 @@
 # Created By: Wesley
 # Date: 4/2/18
 
-import sys, os
 import asyncio
 import discord
 from discord.ext import commands
@@ -104,7 +103,7 @@ async def on_ready():
 
 
 ###############
-# Bot Commans #
+# Bot Commands #
 ###############
 
 # $mkid
