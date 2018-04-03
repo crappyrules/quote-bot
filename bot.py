@@ -180,6 +180,11 @@ async def suggest(ctx):
     suggestion = ctx.message.content[9:]
     command_log.info("%s suggested %s" % (ctx.message.author, suggestion))
     write_suggestion(suggestion)
+    
+    # give thumbs up reaction
+    thumbs_up = get(bot.get_all_emojis(), name='t_ok')
+    await bot.add_reaction(ctx.message, thumbs_up)
+
 
 #############
 # Start Bot #
