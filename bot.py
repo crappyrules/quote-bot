@@ -130,7 +130,8 @@ async def quote(ctx):
     
     # only function in turtle traders
     global turtle_traders
-    if turtle_traders != ctx.message.server:
+    print(ctx.message.server)
+    if turtle_traders not in ctx.message.server:
         return
     
     # get and send message
