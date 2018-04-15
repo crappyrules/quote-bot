@@ -42,9 +42,6 @@ insults = []
 turtle_quotes = []
 mkid_quotes = []
 
-# turtle traders id
-turtle_traders = "413834195220037640"
-
 # config bot defaults
 bot = commands.Bot(
                 command_prefix='$',
@@ -129,9 +126,7 @@ async def quote(ctx):
     command_log.info("%s used $quote" % str(ctx.message.author))
     
     # only function in turtle traders
-    global turtle_traders
-    print(ctx.message.server)
-    if turtle_traders not in ctx.message.server:
+    if "Turtle Traders" != ctx.message.server:
         return
     
     # get and send message
@@ -145,8 +140,7 @@ async def insult(ctx):
     command_log.info("%s used $insult" % str(ctx.message.author))
     
     # only function in turtle traders
-    global turtle_traders
-    if turtle_traders != ctx.message.server:
+    if "Turtle Traders" != ctx.message.server:
         return
 
 
