@@ -126,7 +126,7 @@ async def quote(ctx):
     command_log.info("%s used $quote" % str(ctx.message.author))
     
     # only function in turtle traders
-    if "Turtle Traders" != ctx.message.server:
+    if "Turtle Traders" != str(ctx.message.server):
         return
     
     # get and send message
@@ -140,7 +140,8 @@ async def insult(ctx):
     command_log.info("%s used $insult" % str(ctx.message.author))
     
     # only function in turtle traders
-    if "Turtle Traders" != ctx.message.server:
+    print(ctx.message.server)
+    if "Turtle Traders" != str(ctx.message.server):
         return
 
 
