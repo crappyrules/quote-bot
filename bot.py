@@ -126,13 +126,12 @@ async def mkid(ctx):
 async def quote(ctx):
     """Outputs a random turtle quote"""
     
+    command_log.info("%s used $quote" % str(ctx.message.author))
+    
     # only function in turtle traders
     global turtle_traders
     if turtle_traders != ctx.message.server:
         return
-
-    
-    command_log.info("%s used $quote" % str(ctx.message.author))
     
     # get and send message
     message = get_turtle_quote();
@@ -143,7 +142,13 @@ async def quote(ctx):
 async def insult(ctx):
     """Outputs a random insult that can be directed through @mentions"""
     command_log.info("%s used $insult" % str(ctx.message.author))
- 
+    
+    # only function in turtle traders
+    global turtle_traders
+    if turtle_traders != ctx.message.server:
+        return
+
+
     #randomly get message
     message = get_insult()
 
