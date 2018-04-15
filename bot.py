@@ -42,6 +42,10 @@ insults = []
 turtle_quotes = []
 mkid_quotes = []
 
+# turtle traders id
+turtle_traders = "413834195220037640"
+
+# config bot defaults
 bot = commands.Bot(
                 command_prefix='$',
                 description='insult bot',
@@ -72,6 +76,7 @@ def get_mkid_quote():
 
 # returns a random turtle quote
 def get_turtle_quote():
+
     global turtle_quotes
 
     # read from file if empty
@@ -120,6 +125,13 @@ async def mkid(ctx):
 @bot.command(pass_context=True)
 async def quote(ctx):
     """Outputs a random turtle quote"""
+    
+    # only function in turtle traders
+    global turtle_traders
+    if turtle_traders != ctx.message.server:
+        return
+
+    
     command_log.info("%s used $quote" % str(ctx.message.author))
     
     # get and send message
