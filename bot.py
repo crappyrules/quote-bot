@@ -84,9 +84,12 @@ def get_turtle_quote():
     r = random.randint(0, len(turtle_quotes)-1)
     return turtle_quotes[r]
 
-# write user suggestion to the sugguestion.txt file to be manually added if acceptable
 def write_suggestion(suggestion):
-    with open('suggestions.txt', 'a+') as f:
+    with open('turtle_quotes.txt', 'a+') as f:
+        f.write(suggestion + "\n")
+
+def write_mkid_suggestion(suggestion):
+    with open('mkid_quotes.txt', 'a+') as f:
         f.write(suggestion + "\n")
 
 
@@ -98,7 +101,7 @@ def write_suggestion(suggestion):
 @bot.event
 async def on_ready():
     print("\n-------------------------------")
-    print("Burn Bot ready")
+    print("Quote Bot ready")
     print('Logged in as %s' % bot.user.name)
     print("-------------------------------\n")
     logger.info("Bot Started")
@@ -125,10 +128,6 @@ async def quote(ctx):
     
     command_log.info("%s used $quote" % str(ctx.message.author))
     
-    # only function in turtle traders
-    if "Turtle Traders" != str(ctx.message.server):
-        return
-    
     # get and send message
     message = get_turtle_quote();
     await bot.say("<:trtl:413861615973433383> " + message + " <:trtl:413861615973433383>")
@@ -139,20 +138,13 @@ async def insult(ctx):
     """Outputs a random insult that can be directed through @mentions"""
     command_log.info("%s used $insult" % str(ctx.message.author))
     
-    # only function in turtle traders
-    print(ctx.message.server)
-    if "Turtle Traders" != str(ctx.message.server):
-        return
-
-
     #randomly get message
     message = get_insult()
 
     # append mentions to message if any mentions
     if ctx.message.mentions:
         for mention in ctx.message.mentions:
-            # refuse insult mentions at wesley or bot
-            if mention.id == "409953598194057218" or mention.id == bot.user.id:
+            if mention.id == bot.user.id:
                 message += str(" <@" + ctx.message.author.id+">")
                 await bot.add_reaction(ctx.message, "\u267F")
             
@@ -163,6 +155,18 @@ async def insult(ctx):
     #await bot.add_reaction(ctx.message, "\U0001F525")
     return
 
+# $mkidsuggest
+@bot.command(pass_context=True)
+async def mkidsuggest(ctx):
+    suggestion = ctx.message.content[13:]
+    command_log.info("%s suggested %s" % (ctx.message.author, suggestion))
+    write_mkid_suggestion(suggestion)
+    doReset(ctx)
+
+    # give thumbs up reaction
+    thumbs_up = get(bot.get_all_emojis(), name='t_ok')
+    await bot.add_reaction(ctx.message, thumbs_up)
+
 # $suggest
 @bot.command(pass_context=True)
 async def suggest(ctx):
@@ -170,14 +174,13 @@ async def suggest(ctx):
     suggestion = ctx.message.content[9:]
     command_log.info("%s suggested %s" % (ctx.message.author, suggestion))
     write_suggestion(suggestion)
+    doReset(ctx)
     
     # give thumbs up reaction
     thumbs_up = get(bot.get_all_emojis(), name='t_ok')
     await bot.add_reaction(ctx.message, thumbs_up)
 
-# $reset
-@bot.command(pass_context=True)
-async def reset(ctx):
+def doReset(ctx):
     """Refreshed data to pull in new quotes and insults"""
     global insults
     global turtle_quotes
@@ -186,14 +189,15 @@ async def reset(ctx):
    
     command_log.info("%s used $reset" % str(ctx.message.author))
     
-    # reset name to Burn Bot
-    member = ctx.message.server.get_member(str(bot.user.id))
-    await bot.change_nickname(member, "Burn Bot")
-    
     # reset output arrays
     insults = []
     turtle_quotes = []
     mkid_quotes = []
+
+# $reset
+@bot.command(pass_context=True)
+async def reset(ctx):
+    doReset(ctx)
 
     # give thumbs up reaction
     thumbs_up = get(bot.get_all_emojis(), name='t_ok')
@@ -204,4 +208,3 @@ async def reset(ctx):
 # Start Bot #
 #############
 bot.run(config['token'])
-
