@@ -41,6 +41,8 @@ config = json.load(open('config.json'))
 insults = []
 turtle_quotes = []
 mkid_quotes = []
+eggdra = ['388037798772473859']
+brainlets = []
 
 # config bot defaults
 bot = commands.Bot(
@@ -197,12 +199,27 @@ def doReset(ctx):
 # $reset
 @bot.command(pass_context=True)
 async def reset(ctx):
+    if ctx.message.author.id in eggdra:
+    	await bot.say("FUCK YOU EXTRA YOU RETARD")
+
     doReset(ctx)
 
     # give thumbs up reaction
     thumbs_up = get(bot.get_all_emojis(), name='t_ok')
     await bot.add_reaction(ctx.message, thumbs_up)
 
+@bot.event
+async def on_message(message):
+    await addReaction(message, brainlets, ['brainlet', 't_brainlet'])
+    await addReaction(message, eggdra, ['eggdra', 'eggdra2'])
+    # process any commands, like $quote
+    await bot.process_commands(message)
+
+async def addReaction(message, group, reactions):
+    if message.author.id in group:
+        for reaction in reactions:
+             emote = get(bot.get_all_emojis(), name=reaction)
+             await bot.add_reaction(message, emote)
 
 #############
 # Start Bot #
