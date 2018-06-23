@@ -43,6 +43,7 @@ turtle_quotes = []
 mkid_quotes = []
 eggdra = ['388037798772473859']
 brainlets = []
+fit = ['423914572148244490']
 
 # config bot defaults
 bot = commands.Bot(
@@ -172,7 +173,10 @@ async def mkidsuggest(ctx):
 # $suggest
 @bot.command(pass_context=True)
 async def suggest(ctx):
-    """Can be used to suggest new quotes or insults to be added to the bot after being reiewed"""
+    # Can only use $suggest in #fit
+    if ctx.message.channel.id != fit:
+        return
+
     suggestion = ctx.message.content[9:]
     command_log.info("%s suggested %s" % (ctx.message.author, suggestion))
     write_suggestion(suggestion)
@@ -211,7 +215,7 @@ async def reset(ctx):
 @bot.event
 async def on_message(message):
     await addReaction(message, brainlets, ['brainlet', 't_brainlet'])
-    await addReaction(message, eggdra, ['eggdra', 'eggdra2'])
+    await addReaction(message, eggdra, ['eggdra2'])
     # process any commands, like $quote
     await bot.process_commands(message)
 
@@ -219,7 +223,12 @@ async def addReaction(message, group, reactions):
     if message.author.id in group:
         for reaction in reactions:
              emote = get(bot.get_all_emojis(), name=reaction)
-             await bot.add_reaction(message, emote)
+	     # Don't crash if we can't add a reaction
+             try:
+                await bot.add_reaction(message, emote)
+             except:
+                return
+
 
 #############
 # Start Bot #
