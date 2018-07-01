@@ -133,7 +133,10 @@ async def quote(ctx):
     
     # get and send message
     message = get_turtle_quote();
-    await bot.say("<:trtl:413861615973433383> " + message + " <:trtl:413861615973433383>")
+
+    trtl = get(bot.get_all_emojis(), name='trtl')
+
+    await bot.say("{} {} {}".format(str(trtl), message, str(trtl)))
 
 # $insult
 @bot.command(pass_context=True)
@@ -174,7 +177,7 @@ async def mkidsuggest(ctx):
 @bot.command(pass_context=True)
 async def suggest(ctx):
     # Can only use $suggest in #fit
-    if ctx.message.channel.id != fit:
+    if ctx.message.channel.id not in fit:
         return
 
     suggestion = ctx.message.content[9:]
