@@ -41,9 +41,13 @@ config = json.load(open('config.json'))
 insults = []
 turtle_quotes = []
 mkid_quotes = []
-eggdra = ['388037798772473859']
 brainlets = []
+me = '354701063955152898'
+eggdra = ['388037798772473859']
 fit = ['423914572148244490']
+
+with open('brainlets.txt') as f:
+    brainlets = f.read().splitlines()
 
 # config bot defaults
 bot = commands.Bot(
@@ -94,7 +98,6 @@ def write_suggestion(suggestion):
 def write_mkid_suggestion(suggestion):
     with open('mkid_quotes.txt', 'a+') as f:
         f.write(suggestion + "\n")
-
 
 ##############
 # Bot Events #
@@ -214,6 +217,34 @@ async def reset(ctx):
     # give thumbs up reaction
     thumbs_up = get(bot.get_all_emojis(), name='t_ok')
     await bot.add_reaction(ctx.message, thumbs_up)
+
+@bot.command(pass_context=True)
+async def addbrainlet(ctx):
+    await modifyBrainlet(ctx, remove=False)
+
+async def modifyBrainlet(ctx, remove):
+    if ctx.message.author.id != me:
+        await bot.add_reaction(ctx.message, get(bot.get_all_emojis(), name='ban'))
+        return
+
+    for brainlet in ctx.message.mentions:
+        if remove:
+            try:
+                brainlets.remove(brainlet.id)
+            except ValueError:
+                pass
+        else:
+            brainlets.append(brainlet.id)
+
+    with open('brainlets.txt', 'w') as f:
+        for b in brainlets:
+            f.write(b + "\n")
+
+    await bot.add_reaction(ctx.message, get(bot.get_all_emojis(), name='t_ok'))
+
+@bot.command(pass_context=True)
+async def removebrainlet(ctx):
+    await modifyBrainlet(ctx, remove=True)
 
 @bot.event
 async def on_message(message):
