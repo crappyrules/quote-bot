@@ -44,6 +44,7 @@ mkid_quotes = []
 brainlets = []
 me = '354701063955152898'
 eggdra = ['388037798772473859']
+sips = ['388839914910908436']
 fit = ['423914572148244490']
 
 with open('brainlets.txt') as f:
@@ -210,7 +211,7 @@ def doReset(ctx):
 @bot.command(pass_context=True)
 async def reset(ctx):
     if ctx.message.author.id in eggdra:
-    	await bot.say("FUCK YOU EXTRA YOU RETARD")
+        await bot.say("i don't even care anymore")
 
     doReset(ctx)
 
@@ -234,7 +235,9 @@ async def modifyBrainlet(ctx, remove):
             except ValueError:
                 pass
         else:
-            brainlets.append(brainlet.id)
+            # don't add to list if already present
+            if not brainlet.id in brainlets:
+                brainlets.append(brainlet.id)
 
     with open('brainlets.txt', 'w') as f:
         for b in brainlets:
@@ -250,6 +253,7 @@ async def removebrainlet(ctx):
 async def on_message(message):
     await addReaction(message, brainlets, ['brainlet', 't_brainlet'])
     await addReaction(message, eggdra, ['eggdra2'])
+    await addReaction(message, sips, ['t_boomer'])
     # process any commands, like $quote
     await bot.process_commands(message)
 
