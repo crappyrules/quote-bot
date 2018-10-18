@@ -251,7 +251,7 @@ async def removebrainlet(ctx):
 
 @bot.event
 async def on_message(message):
-    await addReaction(message, brainlets, ['brainlet', 't_brainlet'])
+    await addReaction(message, brainlets, ['t_npc'])
     await addReaction(message, eggdra, ['eggdra2'])
     await addReaction(message, sips, ['t_boomer'])
     # process any commands, like $quote
